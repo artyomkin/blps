@@ -42,41 +42,30 @@ public class CommentService {
        return commentRepo.findByVideoId(videoId);
    }
 
-   public void save(CommentDTO commentDTO, Long videoId) throws SystemException, CommentBodyException, VideoIdException {
+   public void save(CommentDTO commentDTO, Long videoId) throws SystemException, Exception {
        try {
            userTransaction.begin();
            Comment comment = new Comment();
            comment.setVideoId(videoId);
            comment.setAuthor(commentDTO.author);
            comment.setText(commentDTO.text);
-           if (commentRepo.existsById(comment.getId())) {
-               log.info("Comment with id {} exist.", comment.getId());
-               throw new CommentIdException("Comment with id {} exist." + comment.getId());
-           }
-           if (!videoRepo.existsById(comment.getVideoId())) {
-               log.info("Video with id {} hasn't in database", comment.getVideoId());
-               throw new VideoIdException("Video with id {} hasn't in database" + comment.getVideoId());
-           }
-           if (comment.getText().length() == 0) {
-               log.info("Comment with body {} has bad length", comment.getText());
-               throw new CommentBodyException("Comment with body {} has bad length" + comment.getText());
-
-           }
-           log.info("Savin comment " + comment.getText());
            commentRepo.save(comment);
            userTransaction.commit();
        } catch (Exception e) {
-           if (e instanceof VideoIdException) {
-               throw (VideoIdException) e;
-           } else {
-               if (e instanceof CommentBodyException) {
-                   throw (CommentBodyException) e;
-               }
-           }
-       }
-       if (userTransaction != null) {
            userTransaction.rollback();
+           throw new Exception("Transaction rolled back.");
        }
+   }
+
+   public void delete(Long comment_id) throws Exception {
+         try{
+             userTransaction.begin();
+             commentRepo.deleteById(comment_id);
+             userTransaction.commit();
+         } catch (Exception e){
+             userTransaction.rollback();
+             throw new Exception("Transaction rolled back.");
+         }
    }
 
 }

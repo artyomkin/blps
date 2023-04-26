@@ -37,8 +37,22 @@ public class CommentController {
 
     @PostMapping("/api/v1/comments/{video_id}")
     public ResponseEntity postComments(@RequestBody CommentDTO commentDTO, @PathVariable("video_id") Long video_id) throws CommentBodyException, SystemException, VideoIdException {
-        commentService.save(commentDTO, video_id);
-        return new ResponseEntity(commentDTO, HttpStatus.ACCEPTED);
+        try {
+            commentService.save(commentDTO, video_id);
+            return new ResponseEntity(commentDTO, HttpStatus.ACCEPTED);
+        } catch (Exception e){
+            return new ResponseEntity("Comment transaction rolled back.",HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/api/admin/comments/{comment_id}")
+    public ResponseEntity deleteComment(@PathVariable("comment_id") Long comment_id) throws Exception{
+        try{
+            commentService.delete(comment_id);
+            return new ResponseEntity("Deleted.", HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            return new ResponseEntity("Transaction rolled back.", HttpStatus.ACCEPTED);
+        }
     }
 
 }
