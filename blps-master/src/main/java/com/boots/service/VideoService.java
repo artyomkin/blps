@@ -1,10 +1,8 @@
 package com.boots.service;
 
 import com.boots.entity.Video;
-import com.boots.repository.LikesRepo;
 import com.boots.repository.VideoRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

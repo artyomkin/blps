@@ -6,6 +6,7 @@ import com.boots.entity.User;
 import com.boots.entity.Video;
 import com.boots.repository.DislikesRepo;
 import com.boots.repository.LikesRepo;
+import com.boots.repository.VideoRepo;
 import com.boots.service.serviceResponses.LikeStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +19,7 @@ public class LikeService {
     @Autowired
     private DislikesRepo dislikesRepo;
     @Autowired
-    private VideoService videoService;
+    private VideoRepo videoRepo;
     @Autowired
     private UserService userService;
 
@@ -26,7 +27,7 @@ public class LikeService {
         if (userId == null){
             return LikeStatus.INVALID_USER;
         }
-        Video existingVideo = videoService.getById(videoId);
+        Video existingVideo = videoRepo.getById(videoId);
         if (existingVideo == null){
             return LikeStatus.INVALID_VIDEO;
         }

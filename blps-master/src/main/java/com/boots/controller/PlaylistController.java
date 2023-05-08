@@ -2,19 +2,17 @@ package com.boots.controller;
 
 import com.boots.dto.PlaylistDTO;
 import com.boots.entity.Playlist;
-import com.boots.entity.Video;
-import com.boots.security.jwt.JwtTokenProvider;
+import com.boots.entity.User;
 import com.boots.service.PlaylistService;
+import com.boots.service.UserService;
 import com.boots.service.VideoService;
 import com.boots.service.serviceResponses.PlaylistStatus;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+
 
 @RestController
 public class PlaylistController {
@@ -23,53 +21,68 @@ public class PlaylistController {
     @Autowired
     private PlaylistService playlistService;
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    private Gson gson = new Gson();
+    private UserService userService;
 
     @PostMapping("/api/v1/playlists")
-    public ResponseEntity createPlaylist(@RequestBody PlaylistDTO playlistDTO, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity createPlaylist(@RequestBody PlaylistDTO playlistDTO, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         String playlistName = playlistDTO.name;
         playlistService.save(playlistName, false, uid);
         return ResponseEntity.ok("Created.");
     }
 
     @GetMapping("/api/v1/playlists")
-    public ResponseEntity allPlaylists(HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity allPlaylists(Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
-        return ResponseEntity.ok(gson.toJson(playlistService.allPlaylistsByUser(uid)));
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
+        return ResponseEntity.ok(playlistService.allPlaylistsByUser(uid));
     }
 
 
     @GetMapping("/api/v1/playlists/{id}")
-    public ResponseEntity allPlaylists(@PathVariable Long id, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity allPlaylists(@PathVariable Long id, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         Playlist playlist = playlistService.getByIdAndAuthorUserIdWithVideos(id, uid);
         if (playlist == null){
             return ResponseEntity.badRequest().body("This user does not have playlist " + id + ".");
         }
-        return ResponseEntity.ok(gson.toJson(playlist));
+        return ResponseEntity.ok(playlist);
     }
 
     @DeleteMapping("/api/v1/playlists/{id}")
-    public ResponseEntity deletePlaylist(@PathVariable Long id, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity deletePlaylist(@PathVariable Long id, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         if (!playlistService.delete(id, uid)){
             return ResponseEntity.badRequest().body("You do not have playlist " + id + ".");
         }
@@ -77,12 +90,16 @@ public class PlaylistController {
     }
 
     @PutMapping("/api/v1/playlists/{playlist_id}/{video_id}")
-    public ResponseEntity addVideo(@PathVariable Long playlist_id, @PathVariable Long video_id, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity addVideo(@PathVariable Long playlist_id, @PathVariable Long video_id, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         PlaylistStatus status = playlistService.addVideoToPlaylist(playlist_id, video_id, uid);
         if (status == PlaylistStatus.PLAYLIST_NOT_FOUND){
             return ResponseEntity.badRequest().body("Playlist " + playlist_id + " not found.");
@@ -94,12 +111,16 @@ public class PlaylistController {
     }
 
     @DeleteMapping("/api/v1/playlists/{playlist_id}/{video_id}")
-    public ResponseEntity deleteVideo(@PathVariable Long playlist_id, @PathVariable Long video_id, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity deleteVideo(@PathVariable Long playlist_id, @PathVariable Long video_id, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         PlaylistStatus status = playlistService.removeVideoFromPlaylist(playlist_id, video_id, uid);
         if (status == PlaylistStatus.PLAYLIST_NOT_FOUND){
             return ResponseEntity.badRequest().body("Playlist " + playlist_id + " not found.");
@@ -108,23 +129,31 @@ public class PlaylistController {
     }
 
     @GetMapping("/api/v1/playlists/watchLater")
-    public ResponseEntity getWatchLaterPlaylist(HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity getWatchLaterPlaylist(Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         playlistService.assertWatchLaterExists(uid);
-        return ResponseEntity.ok(gson.toJson(playlistService.getWatchLater(uid)));
+        return ResponseEntity.ok(playlistService.getWatchLater(uid));
     }
 
     @PutMapping("/api/v1/playlists/watchLater/{video_id}")
-    public ResponseEntity addToWatchLater(@PathVariable Long video_id, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity addToWatchLater(@PathVariable Long video_id, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         playlistService.assertWatchLaterExists(uid);
         PlaylistStatus status = playlistService.addVideoToWatchLater(video_id, uid);
         if (status == PlaylistStatus.PLAYLIST_NOT_FOUND){
@@ -137,12 +166,16 @@ public class PlaylistController {
     }
 
     @DeleteMapping("/api/v1/playlists/watchLater/{video_id}")
-    public ResponseEntity removeFromWatchLater(@PathVariable Long video_id, HttpServletRequest req){
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity removeFromWatchLater(@PathVariable Long video_id, Principal principal){
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         playlistService.assertWatchLaterExists(uid);
         PlaylistStatus status = playlistService.removeVideoFromWatchLater(video_id, uid);
         if (status == PlaylistStatus.PLAYLIST_NOT_FOUND){

@@ -3,7 +3,7 @@ package com.boots.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "t_like")
+@Table(schema = "s312394")
 public class MyLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

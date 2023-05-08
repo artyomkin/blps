@@ -1,12 +1,10 @@
 package com.boots.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(schema = "s312394")
 public class ViewedVideo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

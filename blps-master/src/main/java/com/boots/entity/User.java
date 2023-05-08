@@ -5,9 +5,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "t_user")
+@Table(schema = "s312394")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +17,12 @@ public class User {
     private String password;
     @Transient
     private String passwordConfirm;
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "t_user_role",
-            joinColumns = {@JoinColumn(name = "t_user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "t_role_id", referencedColumnName = "id")})
-    private List<Role> roles;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "t_user_role",
+            joinColumns = @JoinColumn(name = "t_user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "t_role_id", referencedColumnName = "id"))
+    private Set<Role> roles;
 
     public User() {
     }
@@ -42,7 +44,7 @@ public class User {
         this.username = username;
     }
 
-    public List<Role> getAuthorities() {
+    public Set<Role> getAuthorities() {
         return getRoles();
     }
 
@@ -62,11 +64,11 @@ public class User {
         this.passwordConfirm = passwordConfirm;
     }
 
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService{
@@ -50,7 +51,7 @@ public class UserService{
         user.setUsername(username);
         user.setPassword(password);
         user.setPasswordConfirm(passwordConfirm);
-        user.setRoles(Arrays.asList(new Role(1L, "USER")));
+        user.setRoles(Arrays.asList(new Role(1L, "USER")).stream().collect(Collectors.toSet()));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return RegistrationStatus.OK;

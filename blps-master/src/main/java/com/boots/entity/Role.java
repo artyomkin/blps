@@ -6,8 +6,10 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Table(schema = "s312394")
 public class Role {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 

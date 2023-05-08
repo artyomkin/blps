@@ -5,7 +5,6 @@ import com.boots.entity.Report;
 import com.boots.entity.Video;
 import com.boots.service.ReportService;
 import com.boots.service.VideoService;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +18,11 @@ public class ReportController {
     private ReportService reportService;
     @Autowired
     private VideoService videoService;
-    private Gson gson = new Gson();
 
     @GetMapping("/api/v1/reports/{videoId}")
     public ResponseEntity getReports(@PathVariable Long videoId){
         List<Report> reports = reportService.getAllByVideoId(videoId);
-        return ResponseEntity.ok(gson.toJson(reports));
+        return ResponseEntity.ok(reports);
     }
 
     @PostMapping("/api/v1/reports/{videoId}")

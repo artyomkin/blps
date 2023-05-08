@@ -1,16 +1,16 @@
 package com.boots.controller;
 
-import com.boots.security.jwt.JwtTokenProvider;
+import com.boots.entity.User;
 import com.boots.service.LikeService;
+import com.boots.service.UserService;
 import com.boots.service.serviceResponses.LikeStatus;
-import com.google.gson.Gson;
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+
 
 @RestController
 public class LikeController {
@@ -18,16 +18,19 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
     @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-    private Gson gson = new Gson();
+    private UserService userService;
 
     @GetMapping("/api/v1/like/{videoId}")
-    public ResponseEntity<String> addLike(@PathVariable Long videoId, HttpServletRequest req) {
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> addLike(@PathVariable Long videoId, Principal principal) {
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         LikeStatus likeStatus = likeService.saveLike(videoId, uid);
         if (likeStatus.equals(LikeStatus.ALREADY_LIKED)){
             return ResponseEntity.badRequest().body("This user already liked video " + videoId + ".");
@@ -44,12 +47,16 @@ public class LikeController {
     }
 
     @GetMapping("/api/v1/dislike/{videoId}")
-    public ResponseEntity<String> addDisLike(@PathVariable Long videoId, HttpServletRequest req) {
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> addDisLike(@PathVariable Long videoId, Principal principal) {
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         LikeStatus likeStatus = likeService.saveDislike(videoId, uid);
         if (likeStatus.equals(LikeStatus.ALREADY_LIKED)){
             return ResponseEntity.badRequest().body("This user already disliked video " + videoId + ".");
@@ -66,12 +73,16 @@ public class LikeController {
     }
 
     @DeleteMapping("/api/v1/like/{videoId}")
-    public ResponseEntity<String> undoLike(@PathVariable Long videoId, HttpServletRequest req) {
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> undoLike(@PathVariable Long videoId, Principal principal) {
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         LikeStatus likeStatus = likeService.removeLike(videoId, uid);
         if (likeStatus.equals(LikeStatus.NOT_FOUND)){
             return ResponseEntity.badRequest().body("This user did not like video " + videoId + " yet.");
@@ -89,12 +100,16 @@ public class LikeController {
 
 
     @DeleteMapping("/api/v1/dislike/{videoId}")
-    public ResponseEntity<String> undoDisLike(@PathVariable Long videoId, HttpServletRequest req) {
-        String token = jwtTokenProvider.resolveToken(req);
-        if (token == null){
-            return new ResponseEntity("Unauthorized.", HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> undoDisLike(@PathVariable Long videoId, Principal principal) {
+        String username = principal.getName();
+        if (username == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
         }
-        Long uid = jwtTokenProvider.getUid(token);
+        User user = userService.findByUsername(username);
+        if (user == null){
+            return ResponseEntity.badRequest().body("Unauthorized.");
+        }
+        Long uid = user.getId();
         LikeStatus likeStatus = likeService.removeDislike(videoId, uid);
         if (likeStatus.equals(LikeStatus.NOT_FOUND)){
             return ResponseEntity.badRequest().body("This user did not dislike video " + videoId + " yet.");

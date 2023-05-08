@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
+@Table(schema = "s312394")
 public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

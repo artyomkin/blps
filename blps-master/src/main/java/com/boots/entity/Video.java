@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.*;
 
 @Entity
+@Table(schema = "s312394")
 public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
