@@ -5,6 +5,7 @@ import com.boots.entity.Role;
 import com.boots.entity.User;
 import com.boots.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Primary
 public class MyUserDetailsService implements UserDetailsService {
 
     //get user from the database, via Hibernate

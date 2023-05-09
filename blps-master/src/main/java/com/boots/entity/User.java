@@ -72,4 +72,8 @@ public class User {
         this.roles = roles;
     }
 
+    public String getRole() {
+        Set<Role> roles = getRoles();
+        return roles.iterator().next().getName();
+    }
 }

@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 public class UserService{
     @Autowired
     UserRepository userRepository;
-    @Autowired
-    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public User findByUsername(String username){
         return userRepository.findByUsername(username);
@@ -52,7 +50,7 @@ public class UserService{
         user.setPassword(password);
         user.setPasswordConfirm(passwordConfirm);
         user.setRoles(Arrays.asList(new Role(1L, "USER")).stream().collect(Collectors.toSet()));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         userRepository.save(user);
         return RegistrationStatus.OK;
     }

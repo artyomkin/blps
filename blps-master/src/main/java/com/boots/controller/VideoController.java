@@ -9,6 +9,7 @@ import com.boots.service.VideoService;
 import com.boots.service.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -34,7 +35,7 @@ public class VideoController {
     //}
 
     @GetMapping("/api/v1/videos")
-    public ResponseEntity allVideos(){
+    public ResponseEntity allVideos(Authentication authentication){
         List<Video> videos = videoService.getAll();
         return ResponseEntity.ok(videos);
     }
