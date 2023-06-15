@@ -15,6 +15,7 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private int balance;
     @Transient
     private String passwordConfirm;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
@@ -75,5 +76,13 @@ public class User {
     public String getRole() {
         Set<Role> roles = getRoles();
         return roles.iterator().next().getName();
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
     }
 }

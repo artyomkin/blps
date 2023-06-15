@@ -12,6 +12,7 @@ public class Video {
     private Long id;
     private String title;
     private String link;
+    private Long authorId;
     @Transient
     private Integer likes;
     @Transient
@@ -57,5 +58,13 @@ public class Video {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
     }
 }
