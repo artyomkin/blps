@@ -3,6 +3,7 @@ package com.boots.sheduler;
 import com.boots.entity.User;
 import com.boots.entity.Video;
 import com.boots.service.PaymentService;
+import com.boots.service.UserService;
 import com.boots.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -11,28 +12,31 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
-import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class PaymentScheduler implements Job {
 
-    @Autowired
-    private PaymentService paymentService;
+    private final PaymentService paymentService;
 
-    @Scheduled(cron = "0 0 0 * * 1") // Запускать каждую неделю в полночь в понедельник
-    public void processPayment(User user) {
-        // Логика для зачисления денег на баланс автора за просмотры его новых видео
-        VideoService videoService = new VideoService();
-        List<Video> videos = null;
-        videoService.getAll().stream().filter(video -> video.getAuthorId()==user.getId()).forEach(video-> videos.add(video));
-        for(int i=0; i<videos.size(); i++){
-        paymentService.processPayments(videos.get(i));
-        }
+    public PaymentScheduler(PaymentService paymentService) {
+        this.paymentService = paymentService;
     }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-
+        // Логика для зачисления денег на баланс автора за просмотры его новых видео
+        UserService userService = new UserService();
+        VideoService videoService = new VideoService();
+        List<Video> videos = new ArrayList<>();
+        for (User user : userService.allUsers()) {
+            videoService.getAll().stream()
+                    .filter(video -> video.getAuthorId().equals(user.getId()))
+                    .forEach(videos::add);
+        }
+        for (Video video : videos) {
+            paymentService.processPayments(video);
+        }
     }
 }

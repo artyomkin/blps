@@ -1,7 +1,6 @@
 package com.boots.service;
 import com.boots.entity.User;
 import com.boots.entity.Video;
-import com.boots.entity.ViewedVideo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
