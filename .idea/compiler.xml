@@ -8,14 +8,13 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="spring" />
+        <module name="blps-master" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="spring" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="blps-master" options="-parameters" />
       <module name="spring" options="-parameters" />
     </option>
   </component>
