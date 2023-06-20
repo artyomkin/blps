@@ -24,9 +24,7 @@ import javax.jms.ConnectionFactory;
 @EnableScheduling
 @EnableJms
 public class Application {
-
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
-
 }

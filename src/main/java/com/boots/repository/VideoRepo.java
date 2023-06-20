@@ -1,6 +1,5 @@
 package com.boots.repository;
 
-import com.boots.entity.Playlist;
 import com.boots.entity.Report;
 import com.boots.entity.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +11,7 @@ import java.util.List;
 
 @Repository
 public interface VideoRepo extends JpaRepository<Video, Long> {
+    List<Video> findAll();
     @Query("select v from Video v, ViewedVideo w where w.videoId = v.id")
     List<Video> findAllViewed(@Param("user_id") Long user_id);
     @Query("select v.reports from Video v where v.authorId = :author_id")

@@ -5,6 +5,7 @@ import org.quartz.JobDetail;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
@@ -17,8 +18,8 @@ public class QuartzSubmitJobs {
         return QuartzConfig.createJobDetail(PaymentScheduler.class, "Money for videos");
     }
     @Bean(name = "paymentVideoTrigger")
-    public SimpleTriggerFactoryBean triggerMemberStats(@Qualifier("paymentVideo") JobDetail jobDetail) {
-        return QuartzConfig.createTrigger(jobDetail, 60000, "Payment videos Trigger");
+    public CronTriggerFactoryBean triggerMemberStats(@Qualifier("paymentVideo") JobDetail jobDetail) {
+        return QuartzConfig.createCronTrigger(jobDetail, CRON_EVERY_MINUTE, "Payment videos Trigger");
     }
 }
 

@@ -31,7 +31,7 @@ public class UserService{
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    public List<User> allUsers() throws NullPointerException {
+    public List<User> allUsers(){
         return userRepository.findAll();
     }
 

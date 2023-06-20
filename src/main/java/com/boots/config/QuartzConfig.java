@@ -7,6 +7,7 @@ import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +20,11 @@ import java.util.Properties;
 
 @Slf4j
 @Configuration
+@EnableAutoConfiguration
 public class QuartzConfig {
     private ApplicationContext applicationContext;
     private DataSource dataSource;
+
     public QuartzConfig(ApplicationContext applicationContext, DataSource dataSource) {
         this.applicationContext = applicationContext;
         this.dataSource = dataSource;
