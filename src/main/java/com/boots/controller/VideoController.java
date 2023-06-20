@@ -4,15 +4,13 @@ package com.boots.controller;
 import com.boots.dto.VideoDTO;
 import com.boots.entity.User;
 import com.boots.entity.Video;
-import com.boots.service.PlaylistService;
-import com.boots.service.UserService;
-import com.boots.service.VideoService;
-import com.boots.service.ViewService;
+import com.boots.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jms.JMSException;
 import java.security.Principal;
 import java.util.List;
 
@@ -29,6 +27,8 @@ public class VideoController {
     private ViewService viewService;
     @Autowired
     private PlaylistService playlistService;
+    @Autowired
+    private INotifier __testNotifier;
 
     //@GetMapping(value = "video/{id}", produces = "video/mp4")
     //public Mono<Resource> getVideos(@PathVariable Long id, @RequestHeader("Range") String range){

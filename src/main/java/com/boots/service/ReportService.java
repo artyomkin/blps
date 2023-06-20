@@ -65,7 +65,7 @@ public class ReportService {
    }
 
    public Integer countReportsOfUser(Long userId){
-       Integer reportCount = videoRepo.countReportsByAuthorId(userId);
+       Integer reportCount = videoRepo.countReportsByAuthorId(userId).size();
        return reportCount;
    }
 

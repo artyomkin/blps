@@ -20,7 +20,7 @@ public class PaymentScheduler implements Job {
     @Autowired
     private PaymentService paymentService;
 
-    /*@Scheduled(cron = "0 0 0 * * 1") // Запускать каждую неделю в полночь в понедельник
+    @Scheduled(cron = "0 0 0 * * 1") // Запускать каждую неделю в полночь в понедельник
     public void processPayment(User user) {
         // Логика для зачисления денег на баланс автора за просмотры его новых видео
         VideoService videoService = new VideoService();
@@ -29,7 +29,7 @@ public class PaymentScheduler implements Job {
         for(int i=0; i<videos.size(); i++){
         paymentService.processPayments(videos.get(i));
         }
-    }*/
+    }
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
