@@ -1,5 +1,6 @@
 package com.boots.entity;
 
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.JoinColumnOrFormula;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +20,7 @@ public class Video {
     private Integer likes;
     @Transient
     private Integer dislikes;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name="videoId")
     private List<Report> reports;
 

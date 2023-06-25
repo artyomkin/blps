@@ -27,8 +27,8 @@ public class PaymentScheduler implements Job {
 
     @Override
     public void execute(JobExecutionContext context){
-        log.info("Job ** {} ** starting @ {}", context.getJobDetail().getKey().getName(), context.getFireTime());
-        paymentService.payment();
-        log.info("Job ** {} ** completed.  Next job scheduled @ {}", context.getJobDetail().getKey().getName(), context.getNextFireTime());
+    //    log.info("Job ** {} ** starting @ {}", context.getJobDetail().getKey().getName(), context.getFireTime());
+    //    paymentService.payment();
+    //    log.info("Job ** {} ** completed.  Next job scheduled @ {}", context.getJobDetail().getKey().getName(), context.getNextFireTime());
     }
 }

@@ -1,0 +1,15 @@
+camunda.bpm.client:
+  base-url: http://localhost:8080/engine-rest # the URL pointing to the Camunda Platform Runtime REST API
+  lock-duration: 10000 # defines how many milliseconds the External Tasks are locked until they can be fetched again
+  subscriptions:
+    get_all_videos: # This is topic name
+      process-definition-key: video_management #this is the id that we give for process ID
+camunda.bpm:
+  admin-user:
+    id: demo
+    password: demo
+    firstName: Demo
+  filter:
+    create: All tasks
+
+logging.level.org.camunda.bpm.client: DEBUG # increase the log level of the application

@@ -52,13 +52,13 @@ public class ReportService {
        }
        String email = user.getEmail();
        Integer reportCnt = countReportsOfUser(videoAuthorId);
-       if (reportCnt == 3){
+       if (reportCnt == 1){
            try {
                notifier.notify(email, "Your account has been reported 3 times. If you get one more report your account will be deleted.");
            } catch (JMSException jmsException){
                System.out.println("Could not send email.");
            }
-       } else if (reportCnt > 3){
+       } else if (reportCnt > 1){
            userRepository.deleteById(videoAuthorId);
        }
        return ReportStatus.OK;
