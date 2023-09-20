@@ -25,13 +25,8 @@
 
 # Технологии
 Проект реализован с использованием следующих технологий:
-
-Бэкенд: Java, Spring Boot, JMS, JWT
-
-База данных: PostgreSQL
-
-Брокер: Apache ActiveMQ
-
-Аутентификация и авторизация: Spring Security + JAAS
-
-Хостинг: helios.se.ifmo.ru
+- Бэкенд: Java, Spring Boot, JMS, JWT
+- База данных: PostgreSQL
+- Брокер: Apache ActiveMQ
+- Аутентификация и авторизация: Spring Security + JAAS
+- Хостинг: helios.se.ifmo.ru
