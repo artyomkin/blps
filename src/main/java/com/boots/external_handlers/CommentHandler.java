@@ -31,6 +31,12 @@ public class CommentHandler implements ExternalTaskHandler {
     private LoginModule loginModule;
 
     private Gson gson = new Gson();
+    @Autowired
+    public CommentHandler(CommentService commentService, UserService userService, LoginModule loginModule) {
+        this.commentService = commentService;
+        this.userService = userService;
+        this.loginModule = loginModule;
+    }
 
     @Override
     public void execute(ExternalTask extTask, ExternalTaskService extTaskService) {
@@ -47,14 +53,19 @@ public class CommentHandler implements ExternalTaskHandler {
         commentDTO.text = text;
 
         try{
-            commentService.save(commentDTO, video_id);
+            if (!loginModule.isLoggedIn()) {
+                variables.put("comment_response", "Unauthorized");
+                extTaskService.complete(extTask, variables);
+                return;
+            }
+            
+            commentService.save(commentDTO, videoId);
+            variables.put("comment_response", "OK");
+            extTaskService.complete(extTask, variables);
         } catch (Exception e){
             variables.put("comment_response", "Не удалось оставить комментарий.");
             extTaskService.handleBpmnError(extTask, e.getMessage(), e.getMessage(), variables);
             return;
         }
-
-        variables.put("comment_response", "OK");
-        extTaskService.complete(extTask,variables);
     }
 }

@@ -31,8 +31,13 @@ public class AddReportHandler implements ExternalTaskHandler {
     private UserService userService;
     @Autowired
     private LoginModule loginModule;
-
     private Gson gson = new Gson();
+    @Autowired
+    public AddReportHandler(ReportService reportService, UserService userService, LoginModule loginModule) {
+        this.reportService = reportService;
+        this.userService = userService;
+        this.loginModule = loginModule;
+    }
 
     @Override
     public void execute(ExternalTask extTask, ExternalTaskService extTaskService) {
@@ -41,6 +46,7 @@ public class AddReportHandler implements ExternalTaskHandler {
         String video_id = extTask.getVariable("video_id");
         String username = extTask.getVariable("username");
         String password = extTask.getVariable("password");
+
 
         log.info("Called get add report handler with " + reason + " " + text + " " + username + " " + password + " " + video_id);
 
@@ -54,13 +60,13 @@ public class AddReportHandler implements ExternalTaskHandler {
         ReportDTO reportDTO = new ReportDTO();
         reportDTO.reason = reason;
         reportDTO.text = text;
-
-        ReportStatus reportStatus = reportService.save(reportDTO, Long.parseLong(video_id), userService.findByUsername(username).getId());
-        String report_response = "OK";
+        long userId = userService.findByUsername(username).getId();
+        ReportStatus reportStatus = reportService.save(reportDTO, Long.parseLong(video_id), userId);
+        String reportResponse = "OK";
         if (reportStatus == ReportStatus.ALREADY_REPORTED){
-            report_response = "User " + username + " has already reported video " + video_id;
+            reportResponse = String.format("User %s has already reported video %s", username, video_id);
         }
-        variables.put("report_response", report_response);
-        extTaskService.complete(extTask,variables);
+        variables.put("report_response", reportResponse);
+        extTaskService.complete(extTask, variables);
     }
 }

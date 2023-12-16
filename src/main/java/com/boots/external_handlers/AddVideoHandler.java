@@ -34,7 +34,12 @@ public class AddVideoHandler implements ExternalTaskHandler{
     private UserService userService;
     @Autowired
     private LoginModule loginModule;
-    private Gson gson = new Gson();
+    @Autowired
+    public AddVideoHandler(VideoService videoService, UserService userService, LoginModule loginModule) {
+        this.videoService = videoService;
+        this.userService = userService;
+        this.loginModule = loginModule;
+    }
 
     @Override
     public void execute(ExternalTask extTask, ExternalTaskService extTaskService) {
@@ -57,7 +62,8 @@ public class AddVideoHandler implements ExternalTaskHandler{
         VideoDTO videoDTO = new VideoDTO();
         videoDTO.link = link;
         videoDTO.title = title;
-        videoService.save(videoDTO, userService.findByUsername(username).getId());
+        long userId = userService.findByUsername(username).getId();
+        videoService.save(videoDTO, userId);
 
         variables.put("add_video_response", "Added video " + title);
 
