@@ -17,20 +17,24 @@ public class Notifier implements INotifier {
 
     @Autowired
     JmsTemplate jmsTemplate;
-
     private Gson gson = new Gson();
     private final String URL = "tcp://localhost:61616";
     @Override
-    public void notify(String email, String message) {
+    public void notifyUser(String email, String message) {
         NotificationDTO notificationDTO = new NotificationDTO();
-        notificationDTO.email = email;
-        notificationDTO.msg = message;
-        String jsonMsg = gson.toJson(notificationDTO);
-        jmsTemplate.send("pre_ban_notification", new MessageCreator() {
-            public Message createMessage(Session session) throws JMSException {
-                TextMessage message = session.createTextMessage(jsonMsg);
-                return message;
-            }
-        });
+        notificationDTO.setEmail(email);
+        notificationDTO.setMessage(message);
+
+        String jsonMessage = gson.toJson(notificationDTO);
+
+        try {
+            jmsTemplate.send("pre_ban_notification", session -> {
+                TextMessage textMessage = session.createTextMessage(jsonMessage);
+                return textMessage;
+            });
+        } catch (JmsException e) {
+            // Обработка исключений
+            e.printStackTrace();
+        }
     }
 }

@@ -22,37 +22,36 @@ public class CommentController {
     private CommentService commentService;
 
     @GetMapping("/api/v1/comments/{video_id}")
-    public ResponseEntity<String> getComments(@PathVariable("video_id") String videoId) {
+    public ResponseEntity<List<Comment>> getComments(@PathVariable("video_id") String videoId) {
         log.debug("getting all comments of video " + videoId);
-        Long vidId = 0L;
+        Long vidId;
         try {
             vidId = Long.parseLong(videoId);
         } catch (NumberFormatException e) {
             String errorText = "Incorrect video id.";
-            return new ResponseEntity(errorText, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         List<Comment> comments = commentService.getAllByVideoId(vidId);
-        return new ResponseEntity(comments, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(comments, HttpStatus.OK);
     }
 
     @PostMapping("/api/v1/comments/{video_id}")
-    public ResponseEntity postComments(@RequestBody CommentDTO commentDTO, @PathVariable("video_id") Long video_id) throws CommentBodyException, SystemException, VideoIdException {
+    public ResponseEntity<Comment> postComments(@RequestBody CommentDTO commentDTO, @PathVariable("video_id") Long videoId) {
         try {
-            commentService.save(commentDTO, video_id);
-            return new ResponseEntity(commentDTO, HttpStatus.ACCEPTED);
-        } catch (Exception e){
-            return new ResponseEntity("Comment transaction rolled back.",HttpStatus.BAD_REQUEST);
+            Comment savedComment = commentService.save(commentDTO, videoId);
+            return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
+        } catch (CommentBodyException | SystemException | VideoIdException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("/api/admin/comments/{comment_id}")
-    public ResponseEntity deleteComment(@PathVariable("comment_id") Long comment_id) throws Exception{
-        try{
-            commentService.delete(comment_id);
-            return new ResponseEntity("Deleted.", HttpStatus.ACCEPTED);
+    public ResponseEntity<String> deleteComment(@PathVariable("comment_id") Long commentId) {
+        try {
+            commentService.delete(commentId);
+            return new ResponseEntity<>("Deleted.", HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            return new ResponseEntity("Transaction rolled back.", HttpStatus.ACCEPTED);
+            return new ResponseEntity<>("Transaction rolled back.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

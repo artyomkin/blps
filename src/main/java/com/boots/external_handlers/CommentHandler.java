@@ -58,7 +58,7 @@ public class CommentHandler implements ExternalTaskHandler {
                 extTaskService.complete(extTask, variables);
                 return;
             }
-            
+
             commentService.save(commentDTO, videoId);
             variables.put("comment_response", "OK");
             extTaskService.complete(extTask, variables);

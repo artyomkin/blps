@@ -12,10 +12,6 @@ public class Comment {
     private String author;
     private Long videoId;
 
-    public String getAuthor() {
-        return author;
-    }
-
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -37,10 +33,6 @@ public class Comment {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public void setText(String text) {

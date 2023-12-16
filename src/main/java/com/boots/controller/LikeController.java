@@ -38,22 +38,44 @@ public class LikeController {
         }
     }
 
-    @GetMapping("/api/v1/dislike/{videoId}")
-    public ResponseEntity<String> addDisLike(@PathVariable Long videoId, Principal principal) {
+    @GetMapping("/api/v1/like/{videoId}")
+    public ResponseEntity<String> addLikeOrDisLike(
+            @PathVariable Long videoId,
+            Principal principal,
+            @RequestParam(value = "type") String type
+    ) {
         UserHelper userHelper = new UserHelper(principal, userService);
         Long uid = userHelper.registeryUser();
-        LikeStatus likeStatus = likeService.saveDislike(videoId, uid);
+        LikeStatus likeStatus;
+        switch (type) {
+            case "like":
+                likeStatus = likeService.saveLike(videoId, uid);
+                break;
+            case "dislike":
+                likeStatus = likeService.saveDislike(videoId, uid);
+                break;
+            case "undo-like":
+                likeStatus = likeService.removeLike(videoId, uid);
+                break;
+            case "undo-dislike":
+                likeStatus = likeService.removeDislike(videoId, uid);
+                break;
+            default:
+                return ResponseEntity.badRequest().body("Invalid request.");
+        }
+
         if (likeStatus.equals(LikeStatus.ALREADY_LIKED)){
+            return ResponseEntity.badRequest().body("This user already liked video " + videoId + ".");
+        } else if (likeStatus.equals(LikeStatus.ALREADY_DISLIKED)){
             return ResponseEntity.badRequest().body("This user already disliked video " + videoId + ".");
-        }
-        else if (likeStatus.equals(LikeStatus.INVALID_USER)){
+        } else if (likeStatus.equals(LikeStatus.NOT_FOUND)){
+            return ResponseEntity.badRequest().body("This user did not like or dislike video " + videoId + " yet.");
+        } else if (likeStatus.equals(LikeStatus.INVALID_USER)){
             return ResponseEntity.badRequest().body("Invalid user.");
-        }
-        else if (likeStatus.equals(LikeStatus.INVALID_VIDEO)){
+        } else if (likeStatus.equals(LikeStatus.INVALID_VIDEO)){
             return ResponseEntity.badRequest().body("Invalid video.");
-        }
-        else {
-            return ResponseEntity.ok("Disliked.");
+        } else {
+            return ResponseEntity.ok(type.equals("like") ? "Liked." : "Disliked.");
         }
     }
 
