@@ -23,10 +23,6 @@ public class GetAllVideosHandler implements ExternalTaskHandler {
 
     @Autowired
     private VideoService videoService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private LoginModule loginModule;
     private Gson gson = new Gson();
 
     @Override

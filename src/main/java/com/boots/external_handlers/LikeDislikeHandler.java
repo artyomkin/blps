@@ -25,7 +25,6 @@ public class LikeDislikeHandler implements ExternalTaskHandler {
     private UserService userService;
     @Autowired
     private LoginModule loginModule;
-    private Gson gson = new Gson();
 
     @Override
     public void execute(ExternalTask extTask, ExternalTaskService extTaskService) {

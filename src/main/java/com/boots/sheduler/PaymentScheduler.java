@@ -22,8 +22,6 @@ import java.util.List;
 @Component
 @DisallowConcurrentExecution
 public class PaymentScheduler implements Job {
-    @Autowired
-    private PaymentService paymentService;
 
     @Override
     public void execute(JobExecutionContext context){

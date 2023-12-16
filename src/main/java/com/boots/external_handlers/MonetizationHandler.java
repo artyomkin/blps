@@ -23,12 +23,6 @@ public class MonetizationHandler implements ExternalTaskHandler {
 
     @Autowired
     private PaymentService paymentService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private LoginModule loginModule;
-
-    private Gson gson = new Gson();
 
     @Override
     public void execute(ExternalTask extTask, ExternalTaskService extTaskService) {
