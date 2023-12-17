@@ -16,7 +16,6 @@ public class PaymentService {
     UserService userService;
     @Transactional
     public void payment() throws  NullPointerException{
-        // Логика для зачисления денег на баланс автора за просмотры его новых видео
         for (Video video : videoService.getAll()) {
             User user = userService.findUserById(video.getAuthorId());
             int money = videoService.getById(video.getId()).getLikes()*2;

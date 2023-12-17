@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 @Primary
 public class MyUserDetailsService implements UserDetailsService {
 
-    //get user from the database, via Hibernate
     @Autowired
     private UserRepository userRepository;
 
@@ -34,18 +33,15 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String username)
             throws UsernameNotFoundException {
-//CUSTOM USER HERE vvv
         User user = userRepository.findByUsername(username);
         System.out.println(user.getUsername());
         System.out.println(user.getPassword());
         List<GrantedAuthority> authorities =
                 buildUserAuthority(user.getRoles().stream().collect(Collectors.toList()));
-//if you're implementing UserDetails you wouldn't need to call this method and instead return the User as it is
         return buildUserForAuthentication(user, authorities);
 
     }
 
-    // Converts user to spring.springframework.security.core.userdetails.User
     private MyUserDetails buildUserForAuthentication(User user,
                                                      List<GrantedAuthority> authorities) {
         return new MyUserDetails(user);
@@ -56,7 +52,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
         Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
 
-        // add user's authorities
         for (Role userRole : userRoles) {
             setAuths.add(new SimpleGrantedAuthority(userRole.getName()));
         }

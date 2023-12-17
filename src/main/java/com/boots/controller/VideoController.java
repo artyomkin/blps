@@ -4,6 +4,7 @@ package com.boots.controller;
 import com.boots.dto.VideoDTO;
 import com.boots.entity.User;
 import com.boots.entity.Video;
+import com.boots.helpers.UserHelper;
 import com.boots.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,6 @@ import java.util.List;
 @RestController
 public class VideoController {
 
-    //@Autowired
-    //private StreamingService service;
     @Autowired
     private UserService userService;
     @Autowired
@@ -29,11 +28,6 @@ public class VideoController {
     private PlaylistService playlistService;
     @Autowired
     private INotifier __testNotifier;
-
-    //@GetMapping(value = "video/{id}", produces = "video/mp4")
-    //public Mono<Resource> getVideos(@PathVariable Long id, @RequestHeader("Range") String range){
-    //    return service.getVideo(id);
-    //}
 
     @GetMapping("/api/v1/videos")
     public ResponseEntity allVideos(Authentication authentication){
@@ -74,30 +68,16 @@ public class VideoController {
 
     @GetMapping("/api/v1/videos/viewed")
     public ResponseEntity viewedVideos(Principal principal){
-        String username = principal.getName();
-        if (username == null){
-            return ResponseEntity.badRequest().body("Unauthorized.");
-        }
-        User user = userService.findByUsername(username);
-        if (user == null){
-            return ResponseEntity.badRequest().body("Unauthorized.");
-        }
-        Long uid = user.getId();
+        UserHelper userHelper = new UserHelper(principal, userService);
+        Long uid = userHelper.registeryUser();
         List<Video> viewedVideos = videoService.getAllViewed(uid);
         return ResponseEntity.ok(viewedVideos);
     }
 
     @PostMapping("/api/v1/videos")
     public ResponseEntity addVideo(@RequestBody VideoDTO videoDTO, Principal principal){
-        String username = principal.getName();
-        if (username == null){
-            return ResponseEntity.badRequest().body("Unauthorized.");
-        }
-        User user = userService.findByUsername(username);
-        if (user == null){
-            return ResponseEntity.badRequest().body("Unauthorized.");
-        }
-        Long uid = user.getId();
+        UserHelper userHelper = new UserHelper(principal, userService);
+        Long uid = userHelper.registeryUser();
 
         videoService.save(videoDTO, uid);
         return ResponseEntity.ok("Added video.");
@@ -105,15 +85,8 @@ public class VideoController {
 
     @DeleteMapping("/api/v1/videos/{id}/viewed")
     public ResponseEntity removeFromViewed(@PathVariable Long id, Principal principal){
-        String username = principal.getName();
-        if (username == null){
-            return ResponseEntity.badRequest().body("Unauthorized.");
-        }
-        User user = userService.findByUsername(username);
-        if (user == null){
-            return ResponseEntity.badRequest().body("Unauthorized.");
-        }
-        Long uid = user.getId();
+        UserHelper userHelper = new UserHelper(principal, userService);
+        Long uid = userHelper.registeryUser();
         if (!viewService.delete(id, uid)){
             return ResponseEntity.badRequest().body("Unauthorized user cannot remove videos from viewed.");
         }

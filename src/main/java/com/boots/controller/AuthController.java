@@ -15,27 +15,6 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
-
-    //@PostMapping("/api/v1/login")
-    //public ResponseEntity login(@RequestBody AuthDTO authDTO){
-    //    try{
-
-    //        String username = authDTO.username;
-    //        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, authDTO.password));
-    //        User user = userService.findByUsername(authDTO.username);
-    //        if (user == null){
-    //            throw new UsernameNotFoundException("Username " + username + " not found.");
-    //        }
-    //        String token = jwtTokenProvider.createToken(user.getId(), user.getUsername(), user.getRoles());
-    //        Map<Object, Object> response = new HashMap<>();
-    //        response.put("username", user.getUsername());
-    //        response.put("token", token);
-    //        return ResponseEntity.ok(response);
-    //    } catch (AuthenticationException e){
-    //        return ResponseEntity.badRequest().body("Incorrect username or password.");
-    //    }
-    //}
-
     @PostMapping("/api/v1/registration")
     public ResponseEntity registration(@RequestBody RegDTO regDTO)
     {
